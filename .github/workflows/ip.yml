@@ -12,12 +12,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: 安装依赖
+      - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y cmake g++
 
-      - name: 显示目录结构（调试）
+      - name: Show directory structure (debug)
         run: |
           pwd
           ls -la
@@ -25,23 +25,23 @@ jobs:
           ls -la include
           ls -la test
 
-      - name: 配置项目
+      - name: Configure project
         run: |
           mkdir -p build
           cd build
           cmake ..
 
-      - name: 编译项目
+      - name: Build project
         run: |
           cd build
           make -j4
 
-      - name: 运行测试
+      - name: Run tests
         run: |
           cd build
           ./ip_filter_test
 
-      - name: 验证主程序
+      - name: Verify main program
         run: |
           cd build
           echo -e "192.168.1.1\ttest\n10.0.0.1\ttest" | ./ip_filter
@@ -51,7 +51,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: 显示目录结构（调试）
+      - name: Show directory structure (debug)
         run: |
           Get-Location
           dir
@@ -59,23 +59,23 @@ jobs:
           dir include
           dir test
 
-      - name: 配置项目
+      - name: Configure project
         run: |
           mkdir -p build
           cd build
           cmake .. -G "Visual Studio 17 2022" -A x64
 
-      - name: 编译项目
+      - name: Build project
         run: |
           cd build
           cmake --build . --config Release -- /m
 
-      - name: 运行测试
+      - name: Run tests
         run: |
           cd build/Release
           .\ip_filter_test.exe
 
-      - name: 验证主程序
+      - name: Verify main program
         run: |
           cd build/Release
           echo "192.168.1.1`ttest`n10.0.0.1`ttest" | .\ip_filter.exe
