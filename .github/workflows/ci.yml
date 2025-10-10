@@ -1,0 +1,82 @@
+name: IP Filter Build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-ubuntu:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 安装依赖
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake g++
+
+      - name: 显示目录结构（调试）
+        run: |
+          pwd
+          ls -la
+          ls -la src
+          ls -la include
+          ls -la test
+
+      - name: 配置项目
+        run: |
+          mkdir -p build
+          cd build
+          cmake ..
+
+      - name: 编译项目
+        run: |
+          cd build
+          make -j4
+
+      - name: 运行测试
+        run: |
+          cd build
+          ./ip_filter_test
+
+      - name: 验证主程序
+        run: |
+          cd build
+          echo -e "192.168.1.1\ttest\n10.0.0.1\ttest" | ./ip_filter
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 显示目录结构（调试）
+        run: |
+          Get-Location
+          dir
+          dir src
+          dir include
+          dir test
+
+      - name: 配置项目
+        run: |
+          mkdir -p build
+          cd build
+          cmake .. -G "Visual Studio 17 2022" -A x64
+
+      - name: 编译项目
+        run: |
+          cd build
+          cmake --build . --config Release -- /m
+
+      - name: 运行测试
+        run: |
+          cd build/Release
+          .\ip_filter_test.exe
+
+      - name: 验证主程序
+        run: |
+          cd build/Release
+          echo "192.168.1.1`ttest`n10.0.0.1`ttest" | .\ip_filter.exe
+    
